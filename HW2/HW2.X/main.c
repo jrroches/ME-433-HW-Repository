@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
-
+#include "spi.h"
+#include "waveform.h"
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
 #pragma config JTAGEN = OFF // disable jtag
@@ -32,12 +33,7 @@
 #pragma config PMDL1WAY = OFF // allow multiple reconfigurations
 #pragma config IOL1WAY = OFF // allow multiple reconfigurations
 
-volatile unsigned int button_state = 0;
-
-
 int main() {
-    
-    
 
     __builtin_disable_interrupts(); // disable interrupts while initializing things
 
@@ -54,15 +50,28 @@ int main() {
     DDPCONbits.JTAGEN = 0;
 
     // do your TRIS and LAT commands here
-   
-//    button_state = PORTBbits.RB4;  
+    initSPI();
+    unsigned short triangle_wave[1000];
+    unsigned short sine_wave[500];
+    generate_triangle_wave(triangle_wave);
+    generate_sine_wave(sine_wave);
 
+    int indexA = 0;
+    int indexB = 0;
+    // unsigned short input = 0b0000100000000000;
+    
     __builtin_enable_interrupts();
-
     while (1) {
-        // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-        // remember the core timer runs at half the sysclk
-        
-
+        output_waveform('A', triangle_wave[indexA]);
+        output_waveform('B', sine_wave[indexB]);
+        indexA++;
+        indexB++;
+        if (indexA == 1000) {
+            indexA = 0;
+        }
+        if (indexB == 500) {
+            indexB = 0;
+        }
+        delay_ms(1);
     }
 }
