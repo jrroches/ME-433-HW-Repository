@@ -7,6 +7,7 @@
       <itemPath>font.h</itemPath>
       <itemPath>i2c_master_noint.h</itemPath>
       <itemPath>ssd1306.h</itemPath>
+      <itemPath>ws2812b.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -19,6 +20,7 @@
       <itemPath>font.c</itemPath>
       <itemPath>i2c_master_noint.c</itemPath>
       <itemPath>ssd1306.c</itemPath>
+      <itemPath>ws2812b.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

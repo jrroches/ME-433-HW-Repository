@@ -2,6 +2,7 @@
 #include<sys/attribs.h>  // __ISR macro
 #include "i2c_master_noint.h"
 #include "ssd1306.h"
+#include "ws2812b.h"
 #include "font.h"
 #include <stdio.h>
 
@@ -67,13 +68,27 @@ int main() {
     //Init ssd1306
     ssd1306_setup();
     
-    //Init variables
     char str[50];
-    char tmr[50];
-    char str2[50];
-    float time = 0;
-    float fps;
-    unsigned int counter=0;
+    sprintf(str,"NeoPixels Project");
+    drawString(0,8,str);
+    ssd1306_update();
+    
+    //Init ws2812b
+    ws2812b_setup();
+    
+    wsColor colorArray[4];
+    colorArray[0]=HSBtoRGB(0,1,1);
+    colorArray[1]=HSBtoRGB(60,1,1);
+    colorArray[2]=HSBtoRGB(120,1,1);
+    colorArray[3]=HSBtoRGB(240,1,1);
+    ws2812b_setColor(colorArray,4);
+    
+    int LED1 = 0;
+    int LED2 = 1;
+    int LED3 = 2;
+    int LED4 = 3;
+    
+    wsColor waveformArray[4];
     
     
 
@@ -83,36 +98,42 @@ int main() {
     while (1) {
         // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
         // remember the core timer runs at half the sysclk
-         
+        
+//        //Heartbeat
+//        LATASET = 0x10;
+//        _CP0_SET_COUNT(0);
+//        while(_CP0_GET_COUNT()<(12000000)){}
+//        LATACLR = 0x10;
+//        _CP0_SET_COUNT(0);
+//        while(_CP0_GET_COUNT()<(12000000)){}
+          
+        //Waveforms
+        if (LED1 == 4){
+            LED1 = 0;
+        }
+        if (LED2 == 4){
+            LED2=0;
+        }
+        if (LED3 == 4){
+            LED3=0;
+        }
+        if (LED4 == 4){
+            LED4=0;
+        }
+        
+        waveformArray[0] = colorArray[LED1];
+        waveformArray[1] = colorArray[LED2];
+        waveformArray[2] = colorArray[LED3];
+        waveformArray[3] = colorArray[LED4];
+        ws2812b_setColor(waveformArray,4);
+        
+        LED1++;
+        LED2++;
+        LED3++;
+        LED4++;
+        
         _CP0_SET_COUNT(0);
-        sprintf(str,"May the force be with you");
-        drawString(0,8,str);
-        ssd1306_update();
-        time=_CP0_GET_COUNT();
-        
-        fps= (1/(time/24000000));
-        sprintf(tmr,"FPS: %5.1f",fps);
-        drawString(0,16,tmr);
-        ssd1306_update();
-        
-        counter++;
-        sprintf(str2,"count: %d",counter);
-        drawString(0,24,str2);
-        ssd1306_update();
-        
-        
-        //Heartbeat
-        LATASET = 0x10;
-        _CP0_SET_COUNT(0);
-        while(_CP0_GET_COUNT()<(12000000)){}
-        LATACLR = 0x10;
-        _CP0_SET_COUNT(0);
-        while(_CP0_GET_COUNT()<(12000000)){}
-        
-        
-        
-        
-        
+        while(_CP0_GET_COUNT()<(1500000)){}
 
     }
 }
